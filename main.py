@@ -1,8 +1,13 @@
+import re
+import time
+
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 
 
 URL = "http://automated.pythonanywhere.com/"
+MAIN_SENTENCE = "/html/body/div[1]/div/h1[1]"
+TEMPERATURE = "/html/body/div[1]/div/h1[2]"
 
 
 def get_driver():
@@ -20,13 +25,20 @@ def get_driver():
     return driver
 
 
-def main():
-    driver = get_driver()
-    element = driver.find_element(by="xpath",
-                                  value="/html/body/div[1]/div/h1[1]")
-    return element.text
-
-
 if __name__ == "__main__":
+    # Load the browser driver from the project main path
     service = Service()
-    print(main())
+    # Open URL in browser with options
+    driver = get_driver()
+    # sleep 2 seconds to wait for dynamic content
+    time.sleep(2)
+    # Get static text
+    main_text = driver.find_element(by="xpath",
+                                    value=MAIN_SENTENCE).text
+    # Get dynamic temperature
+    element = driver.find_element(by="xpath",
+                                  value=TEMPERATURE).text
+    temperature = float(element.split(": ")[1])
+    # Print output
+    print(f"Main sentence: {main_text}")
+    print(f"Temperature: {temperature}")
